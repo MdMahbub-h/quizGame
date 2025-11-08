@@ -237,8 +237,8 @@ class GameScene extends Phaser.Scene {
       width * 0.075
     );
 
-    this.timerBg = this.createRoundedRect(70, 215, 210, 85, 42, 0xf2f2f6, 0.9);
-    this.scoreBg = this.createRoundedRect(470, 215, 240, 85, 42, 0xf2f2f6, 0.5);
+    this.timerBg = this.createRoundedRect(70, 215, 210, 85, 42, 0xf2f2f6, 1);
+    this.scoreBg = this.createRoundedRect(470, 215, 240, 85, 42, 0xf2f2f6, 1);
     this.questionBg = this.createRoundedRect(
       230,
       442,
@@ -246,7 +246,7 @@ class GameScene extends Phaser.Scene {
       85,
       42,
       0xf2f2f6,
-      0.5
+      1
     );
     this.timerIcon = this.add.image(90, 235, "clock").setOrigin(0, 0);
     this.coinIcon = this.add.image(495, 233, "coin").setOrigin(0, 0);
