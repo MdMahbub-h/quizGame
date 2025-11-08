@@ -142,7 +142,7 @@ class GameScene extends Phaser.Scene {
   checkAnswer(selectedIndex) {
     this.answerChecking = true;
     if (selectedIndex === this.question.answer) {
-      this.score += 2000;
+      this.score += 1000;
       this.scoreText.setText(this.score);
       this.optionBgs[selectedIndex].setTexture(this.optionBgTexture[2]);
       this.optionTexts[selectedIndex].letterBg.setTexture("letterBgAnswer");
