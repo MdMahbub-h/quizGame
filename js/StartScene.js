@@ -11,7 +11,15 @@ class StartScene extends Phaser.Scene {
 
     this.bg = this.add.image(width / 2, height / 2, "firstPageBg");
     this.jaziText = this.add.image(width / 2, height * 0.449, "jazi");
+    const fontsToLoad = [
+      "10px heavyItalic",
+      "10px medium",
+      "10px bold",
+      "10px normal",
+    ];
+    Promise.all(fontsToLoad.map((f) => document.fonts.load(f))).then(() => {});
     this.startBtn = this.add.image(width / 2, height * 0.59, "startBtn");
+
     this.startBtn.setInteractive({ useHandCursor: true });
     this.startBtn.on("pointerdown", () => {
       this.startBtn.disableInteractive();

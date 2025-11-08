@@ -15,7 +15,6 @@ class GameScene extends Phaser.Scene {
 
     this.createUi();
     this.createQuiz();
-    // this.pauseMenu();
   }
 
   createQuiz() {
@@ -292,7 +291,9 @@ class GameScene extends Phaser.Scene {
     // this.timerBg = this.createRoundedRect(80, 250, 200, 80, 40, 0xf2f2f6, 1);
   }
 
-  onTimeUp() {}
+  onTimeUp() {
+    this.scene.start("EndScene", { score: this.score });
+  }
   createRoundedRect(
     x,
     y,
