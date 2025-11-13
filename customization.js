@@ -9,7 +9,7 @@ export const questions = [
       "Riyadh Shopping Carnival",
       "Pink ash",
     ],
-    answer: 2,
+    answer: 2, //index [0,1,2,3]
   },
   {
     question:

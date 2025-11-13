@@ -9,6 +9,8 @@ class GameScene extends Phaser.Scene {
     this.questions = questions;
     this.currentQuestionIndex = 0;
     this.score = 0;
+    this.basePoint = 5;
+    this.streakLevel = 1;
     this.paused = false;
 
     // this.scene.start("EndScene", { score: this.score });
@@ -53,6 +55,16 @@ class GameScene extends Phaser.Scene {
     const startY = 895;
     const gap = 140;
     const letters = ["A", "B", "C", "D"];
+
+    this.resultText = this.add
+      .text(width / 2, 380, "Correct!", {
+        fontFamily: "heavyItalic",
+        fontSize: "44px",
+        color: "#00ff00",
+        padding: { x: 20, y: 10 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0);
 
     for (let i = 0; i < 4; i++) {
       // Create rounded rectangle background
@@ -141,8 +153,10 @@ class GameScene extends Phaser.Scene {
 
   checkAnswer(selectedIndex) {
     this.answerChecking = true;
+
     if (selectedIndex === this.question.answer) {
-      this.score += 1000;
+      this.score += this.basePoint + this.streakLevel * 10;
+      this.streakLevel += 1;
       this.scoreText.setText(this.score);
       this.optionBgs[selectedIndex].setTexture(this.optionBgTexture[2]);
       this.optionTexts[selectedIndex].letterBg.setTexture("letterBgAnswer");
@@ -152,7 +166,15 @@ class GameScene extends Phaser.Scene {
       this.optionTexts[selectedIndex].optionText.setColor(
         Phaser.Display.Color.IntegerToColor(this.optionColors[1]).rgba
       );
+
+      this.showResult(true);
     } else {
+      this.streakLevel = 1;
+      this.score -= this.streakLevel * 10;
+      if (this.score < 0) {
+        this.score = 0;
+      }
+      this.scoreText.setText(this.score);
       this.optionBgs[selectedIndex].setTexture(this.optionBgTexture[3]);
       this.optionTexts[selectedIndex].letterBg.setTexture("letterBgAnswer");
       this.optionTexts[selectedIndex].letterText.setColor(
@@ -162,26 +184,64 @@ class GameScene extends Phaser.Scene {
         Phaser.Display.Color.IntegerToColor(this.optionColors[1]).rgba
       );
 
-      this.optionBgs[this.question.answer].setTexture(this.optionBgTexture[2]);
-      this.optionTexts[this.question.answer].letterBg.setTexture(
-        "letterBgAnswer"
-      );
-      this.optionTexts[this.question.answer].letterText.setColor(
-        Phaser.Display.Color.IntegerToColor(this.letterColors[0]).rgba
-      );
-      this.optionTexts[this.question.answer].optionText.setColor(
-        Phaser.Display.Color.IntegerToColor(this.optionColors[1]).rgba
-      );
+      // this.optionBgs[this.question.answer].setTexture(this.optionBgTexture[2]);
+      // this.optionTexts[this.question.answer].letterBg.setTexture(
+      //   "letterBgAnswer"
+      // );
+      // this.optionTexts[this.question.answer].letterText.setColor(
+      //   Phaser.Display.Color.IntegerToColor(this.letterColors[0]).rgba
+      // );
+      // this.optionTexts[this.question.answer].optionText.setColor(
+      //   Phaser.Display.Color.IntegerToColor(this.optionColors[1]).rgba
+      // );
+
+      this.showResult(false);
     }
 
     // Move to next this.question after short delay
-    this.time.delayedCall(2000, () => {
+    this.time.delayedCall(250, () => {
       this.currentQuestionIndex++;
       if (this.currentQuestionIndex >= this.questions.length) {
-        this.scene.start("EndScene", { score: this.score });
+        this.paused = true;
+        this.time.delayedCall(1000, () => {
+          this.paused = false;
+          this.scene.start("EndScene", { score: this.score });
+        });
       } else {
         this.showNextQuestion();
       }
+    });
+  }
+
+  showResult(isCorrect) {
+    // Set color & text based on result
+    if (isCorrect) {
+      this.resultText.setText("Correct!");
+      this.resultText.setStyle({
+        color: "#00ff00",
+      });
+    } else {
+      this.resultText.setText("Wrong!");
+      this.resultText.setStyle({
+        color: "#ff0000",
+      });
+    }
+
+    // Flash animation
+    this.tweens.add({
+      targets: this.resultText,
+      alpha: { from: 0, to: 1 },
+      scale: { from: 1, to: 1.3 },
+      duration: 250, // fade in
+      yoyo: true, // fade out back to 0
+      ease: "Sine.easeInOut",
+      onStart: () => {
+        this.resultText.setAlpha(1);
+      },
+      onComplete: () => {
+        this.resultText.setAlpha(0);
+        this.resultText.setScale(1);
+      },
     });
   }
 
@@ -292,7 +352,9 @@ class GameScene extends Phaser.Scene {
   }
 
   onTimeUp() {
-    this.scene.start("EndScene", { score: this.score });
+    this.time.delayedCall(1000, () => {
+      this.scene.start("EndScene", { score: this.score });
+    });
   }
   createRoundedRect(
     x,
